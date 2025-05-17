@@ -1,0 +1,34 @@
+SHOW DATABASES;
+
+CREATE DATABASE vit;
+USE vit;
+
+CREATE TABLE student_data (
+    student_name VARCHAR(100),
+    student_id VARCHAR(20) PRIMARY KEY,
+    department VARCHAR(100),
+    passout_year INT
+);
+
+INSERT INTO student_data (student_name, student_id, department, passout_year) VALUES
+('Chinnari Krishna Madhav', '22BCE2121', 'Computer Science', 2026),
+('Neelesh Varma', '21EEE2132', 'Electrical Engineering', 2025),
+('Rahul Manthena', '22MEC1303', 'Mechanical Engineering', 2026),
+('Rudraraju Hruday', '20BCE1334', 'Computer Science', 2024);
+
+INSERT INTO student_data (student_name, student_id, department, passout_year) VALUES
+('Chiraag Jain', '21CSE1005', 'Computer Science', 2025),
+('Tony Pushkal', '21ECE1006', 'Electronics Engineering', 2025),
+('Hari Raj', '20BBA1007', 'Business', 2024),
+('Harshvardhan pundit', '22CIV1008', 'Civil Engineering', 2026),
+('Sahil Varma', '21BIO1009', 'Bio Chemical', 2025);
+
+SELECT * FROM student_data;
+
+ALTER TABLE student_data ADD(mobile VARCHAR(10));
+DESC student_data;
+ALTER TABLE student_data DROP COLUMN mobile;
+
+ALTER TABLE student_data ADD(nationality VARCHAR(10) DEFAULT 'India');
+
+UPDATE student_data SET student_name='Madhav' WHERE student_name='Chinnari Krishna Madhav';
