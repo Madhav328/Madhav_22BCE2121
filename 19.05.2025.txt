@@ -1,0 +1,99 @@
+SHOW DATABASES;
+USE vitvellore;
+SHOW TABLES;
+DESC vit_vellore;
+ALTER TABLE vit_vellore DROP COLUMN s_country;
+
+CREATE TABLE vit_ap (
+    full_name VARCHAR(100),
+    reg_no VARCHAR(20),
+    school VARCHAR(100),
+    graduation_year INT
+);
+INSERT INTO vit_ap (full_name, reg_no, school, graduation_year) VALUES
+('Ishita Sharma', '21BCE1201', 'School of Computing Sciences', 2025),
+('Rajeev Nair', '21ECE1202', 'School of Electronics and Communication', 2025),
+('Preeti Mishra', '21MEC1203', 'School of Mechanical Sciences', 2025),
+('Harshad Kulkarni', '21CIV1204', 'School of Infrastructure', 2025),
+('Kavya Menon', '21EEE1205', 'School of Electrical Systems', 2025),
+('Rohit Bansal', '21BCE1206', 'School of Computing Sciences', 2025),
+('Neelam Sinha', '21ECE1207', 'School of Electronics and Communication', 2025),
+('Jitesh Agarwal', '21MEC1208', 'School of Mechanical Sciences', 2025),
+('Snehal Desai', '21CIV1209', 'School of Infrastructure', 2025),
+('Tarun Mathur', '21EEE1210', 'School of Electrical Systems', 2025);
+
+CREATE TABLE vit_bhopal (
+    full_name VARCHAR(100),
+    reg_no VARCHAR(20),
+    school VARCHAR(100),
+    graduation_year INT
+);
+INSERT INTO vit_bhopal (full_name, reg_no, school, graduation_year) VALUES
+('Rachita Rao', '21BCE1301', 'School of Computing Sciences', 2025),
+('Deepak Yadav', '21ECE1302', 'School of Electronics and Communication', 2025),
+('Ankita Joshi', '21MEC1303', 'School of Mechanical Sciences', 2025),
+('Nitin Tiwari', '21CIV1304', 'School of Infrastructure', 2025),
+('Vaishnavi Pillai', '21EEE1305', 'School of Electrical Systems', 2025),
+('Saurabh Mishra', '21BCE1306', 'School of Computing Sciences', 2025),
+('Palak Mahajan', '21ECE1307', 'School of Electronics and Communication', 2025),
+('Darshan Patil', '21MEC1308', 'School of Mechanical Sciences', 2025),
+('Aishwarya Shetty', '21CIV1309', 'School of Infrastructure', 2025),
+('Aditya Mehta', '21EEE1310', 'School of Electrical Systems', 2025);
+
+SELECT * FROM vit_vellore;
+SELECT * FROM vit_ap;
+SELECT * FROM vit_bhopal;
+
+CREATE TABLE Staff (
+	STAFF_ID INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+	FIRST_NAME CHAR(25),
+	LAST_NAME CHAR(25),
+	SALARY INT,
+	JOINING_DATE DATETIME,
+	DEPARTMENT CHAR(25)
+);
+INSERT INTO Staff(STAFF_ID, FIRST_NAME, LAST_NAME, SALARY, JOINING_DATE, DEPARTMENT) VALUES
+		(101, 'Aarav', 'Reddy', 110000, '2014-02-20 09:00:00', 'HR'),
+		(102, 'Bhavana', 'Kapoor', 85000, '2014-06-11 09:00:00', 'Admin'),
+		(103, 'Devansh', 'Iyer', 310000, '2014-02-20 09:00:00', 'HR'),
+		(104, 'Kunal', 'Chatterjee', 490000, '2014-02-20 09:00:00', 'Admin'),
+		(105, 'Tanya', 'Dewan', 470000, '2014-06-11 09:00:00', 'Admin'),
+		(106, 'Ritesh', 'Basu', 195000, '2014-06-11 09:00:00', 'Finance'),
+		(107, 'Pritam', 'Naik', 78000, '2014-01-20 09:00:00', 'Finance'),
+        (108, 'Sanya', 'Kulkarni', 92000, '2014-04-11 09:00:00', 'Admin');
+
+SELECT * FROM Staff;
+DELETE FROM Staff WHERE department='Finance';
+DROP TABLE Worker;
+DELETE FROM vit_bhopal WHERE full_name='Rachita Rao';
+TRUNCATE TABLE Staff;
+SELECT * FROM Staff WHERE salary>80000;
+SELECT first_name FROM Staff WHERE department='HR' AND salary>=10000;
+SELECT first_name, department FROM Staff WHERE salary > 200000 AND department = 'HR';
+SELECT * FROM Staff WHERE salary < 200000 AND department = 'HR' OR department = 'Admin';
+SELECT * FROM Staff WHERE salary > 100000 AND salary < 300000 AND (department = 'Admin' OR department = 'Finance');
+SELECT * FROM Staff WHERE department NOT IN ('HR', 'Admin');
+SELECT * FROM Staff WHERE MOD(staff_id, 2) = 0 AND department IN ('Admin', 'HR') AND salary = (
+    SELECT MAX(salary) FROM Staff WHERE MOD(staff_id, 2) = 0 AND department IN ('Admin', 'HR')
+);
+
+CREATE DATABASE vitcampus;
+USE vitcampus;
+CREATE TABLE ece(id INT, name VARCHAR(40));
+START TRANSACTION;
+INSERT INTO ece VALUES (201, 'Siddhi');
+SAVEPOINT sp1;
+INSERT INTO ece VALUES (202, 'Manav');
+SAVEPOINT sp2;
+DELETE FROM ece WHERE id=201;
+SELECT * FROM ece;
+ROLLBACK TO sp2;
+DELETE FROM ece;
+INSERT INTO ece VALUES (203, 'Kabir');
+SAVEPOINT sp3;
+INSERT INTO ece VALUES (204, 'Diya');
+SAVEPOINT sp4;
+DELETE FROM ece WHERE id=203;
+SELECT * FROM ece;
+ROLLBACK TO sp4;
+COMMIT;
