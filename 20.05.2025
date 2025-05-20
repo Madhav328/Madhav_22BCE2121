@@ -1,0 +1,62 @@
+CREATE TABLE Faculty (
+    faculty_id INT PRIMARY KEY,
+    full_name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE,
+    dept_id INT NOT NULL,
+    CONSTRAINT fk_faculty_dept FOREIGN KEY (dept_id) REFERENCES Department(dept_id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);
+
+CREATE TABLE Teaches (
+    faculty_id INT,
+    course_id INT,
+    assigned_date DATE DEFAULT CURRENT_DATE,
+    PRIMARY KEY (faculty_id, course_id),
+    FOREIGN KEY (faculty_id) REFERENCES Faculty(faculty_id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+    FOREIGN KEY (course_id) REFERENCES Course(course_id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);
+
+CREATE TABLE Classroom (
+    room_id INT PRIMARY KEY,
+    building VARCHAR(100) NOT NULL,
+    capacity INT CHECK (capacity >= 10)
+);
+
+CREATE TABLE Schedule (
+    course_id INT,
+    room_id INT,
+    class_date DATE NOT NULL,
+    start_time TIME NOT NULL,
+    end_time TIME NOT NULL,
+    PRIMARY KEY (course_id, room_id, class_date),
+    FOREIGN KEY (course_id) REFERENCES Course(course_id)
+        ON DELETE CASCADE,
+    FOREIGN KEY (room_id) REFERENCES Classroom(room_id)
+        ON DELETE CASCADE,
+    CHECK (start_time < end_time)
+);
+
+INSERT INTO Faculty VALUES
+(201, 'Dr. A. Sharma', 'asharma@univ.edu', 1),
+(202, 'Dr. B. Rao', 'brao@univ.edu', 2);
+
+INSERT INTO Teaches VALUES
+(201, 501, '2024-07-10'),
+(202, 502, '2024-07-11');
+
+INSERT INTO Classroom VALUES
+(101, 'Block A', 50),
+(102, 'Block B', 30);
+
+INSERT INTO Schedule VALUES
+(501, 101, '2024-09-01', '09:00:00', '10:30:00'),
+(502, 102, '2024-09-01', '11:00:00', '12:30:00');
+
+DELETE FROM Faculty WHERE faculty_id = 202;
+
+UPDATE Department SET dept_id = 5 WHERE dept_id = 1;
