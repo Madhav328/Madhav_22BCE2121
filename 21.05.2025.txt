@@ -1,0 +1,109 @@
+USE vit;
+
+SHOW TABLES;
+
+SELECT * FROM staff1;
+DESC staff1;
+
+CREATE TABLE staff (
+    staff_id INT PRIMARY KEY,
+    first_name VARCHAR(50),
+    last_name VARCHAR(50),
+    salary INT,
+    joining_date DATETIME,
+    department VARCHAR(50)
+);
+
+INSERT INTO staff VALUES
+(201, 'Maya', 'Iyer', 145000, '2020-02-12 10:00:00', 'Finance'),
+(202, 'Nikhil', 'Verma', 89000, '2019-06-18 08:30:00', 'IT'),
+(203, 'Priya', 'Reddy', 123000, '2021-03-25 09:45:00', 'HR'),
+(204, 'Vikram', 'Nair', 77000, '2018-11-02 11:00:00', 'Admin'),
+(205, 'Simran', 'Khan', 138000, '2022-05-10 09:15:00', 'HR'),
+(206, 'Aman', 'Joshi', 92000, '2023-01-14 10:20:00', 'IT'),
+(207, 'Tanya', 'Das', 86000, '2020-08-30 08:50:00', 'Finance'),
+(208, 'Kabir', 'Chawla', 99000, '2024-04-22 09:30:00', 'Admin');
+
+SELECT * FROM staff1 WHERE staff_id IN (1, 2);
+SELECT * FROM staff1 WHERE staff_id NOT IN (1, 2);
+SELECT * FROM staff1 WHERE salary BETWEEN 110000 AND 160000;
+SELECT * FROM staff1 WHERE salary NOT BETWEEN 110000 AND 160000;
+SELECT * FROM staff1 WHERE salary BETWEEN 110000 AND 170000 AND (staff_id IN (1, 2, 3, 4));
+SELECT MIN(salary) FROM staff1;
+SELECT MAX(salary) FROM staff1;
+SELECT SUM(salary) FROM staff1;
+SELECT AVG(salary) FROM staff1;
+SELECT * FROM staff1 WHERE salary = (SELECT MIN(salary) FROM staff1);
+
+SELECT department, SUM(salary) AS total_salary
+FROM staff1
+GROUP BY department
+HAVING SUM(salary) > 120000;
+
+SELECT DISTINCT(department) FROM staff1;
+SELECT department FROM staff
+UNION
+SELECT department FROM staff1;
+
+SELECT department FROM staff
+UNION ALL
+SELECT department FROM staff1;
+
+SELECT * FROM staff1 WHERE staff_id IN (1, 2, 3)
+UNION
+SELECT * FROM staff WHERE staff_id IN (201, 202, 203);
+
+SELECT * FROM staff1 WHERE salary <= 160000 ORDER BY salary;
+SELECT * FROM staff1 WHERE salary <= 160000 ORDER BY salary DESC;
+SELECT * FROM staff1 WHERE first_name LIKE '_i%l';
+SELECT * FROM staff1 WHERE first_name LIKE '__i%';
+SELECT * FROM staff1 WHERE first_name LIKE '%a_a';
+SELECT * FROM staff1 WHERE first_name LIKE '_aa%';
+SELECT * FROM staff1 WHERE first_name LIKE 'M%' OR first_name LIKE 'N%';
+
+CREATE VIEW admin_group AS SELECT * FROM staff1 WHERE department = 'Admin' AND salary < 95000;
+CREATE OR REPLACE VIEW admin_group AS SELECT * FROM staff1 WHERE department = 'Admin' AND salary > 150000;
+SELECT * FROM admin_group;
+DROP VIEW admin_group;
+
+SELECT first_name, salary,
+CASE
+    WHEN salary > 250000 THEN "Rich people"
+    WHEN salary <= 250000 AND salary >= 110000 THEN "MIDDLE CLASS"
+    WHEN salary < 110000 AND salary >= 0 THEN "POOR CLASS"
+    ELSE "Data not found"
+END AS Status_checksalary
+FROM staff;
+
+SELECT * FROM staff;
+
+CREATE TABLE items (
+    ItemID INT PRIMARY KEY,
+    ItemName VARCHAR(100),
+    VendorID INT,
+    TypeID INT,
+    Package VARCHAR(50),
+    Cost DECIMAL(10, 2)
+);
+
+INSERT INTO items VALUES
+(11, 'Green Tea', 2, 3, '6 packs x 15 bags', 12.50),
+(12, 'Black Coffee', 2, 3, '24 - 330 ml bottles', 15.75),
+(13, 'Honey Syrup', 2, 4, '10 - 500 ml bottles', 11.25),
+(14, 'Garlic Seasoning', 2, 4, '36 - 8 oz jars', 20.00),
+(15, 'Vegetable Mix', 2, 4, '24 boxes', 18.40);
+
+CREATE TABLE purchases (
+    PurchaseID INT PRIMARY KEY,
+    ClientID INT,
+    AgentID INT,
+    PurchaseDate DATE,
+    CarrierID INT
+);
+
+INSERT INTO purchases VALUES
+(20010, 101, 7, '2023-06-12', 2),
+(20011, 112, 8, '2023-06-15', 3),
+(20012, 105, 9, '2023-06-18', 1),
+(20013, 109, 7, '2023-06-21', 2),
+(20014, 104, 8, '2023-06-24', 3);
