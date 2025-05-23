@@ -1,0 +1,113 @@
+USE university;
+
+CREATE TABLE employees (
+    emp_id INT,
+    emp_name VARCHAR(30),
+    department VARCHAR(30),
+    salary INT,
+    joining_date DATE
+);
+
+INSERT INTO employees VALUES
+(201, 'Ananya', 'HR', 52000, '2022-04-01'),
+(202, 'Rohan', 'Finance', 68000, '2021-06-15'),
+(203, 'Sneha', 'Engineering', 88000, '2023-01-12'),
+(204, 'Vikram', 'Engineering', 86000, '2020-09-23'),
+(205, 'Neha', 'HR', 55000, '2022-12-05'),
+(206, 'Amit', 'Marketing', 47000, '2023-03-18'),
+(207, 'Divya', 'Finance', 73000, '2021-11-09'),
+(208, 'Raj', 'Engineering', 91000, '2019-07-30');
+
+CREATE TABLE departments (
+    dept_id INT,
+    dept_name VARCHAR(30),
+    budget INT
+);
+
+INSERT INTO departments VALUES
+(1, 'HR', 300000),
+(2, 'Finance', 500000),
+(3, 'Engineering', 1000000),
+(4, 'Marketing', 200000);
+
+SELECT * FROM departments;
+SELECT * FROM employees;
+
+SELECT COUNT(department)
+FROM employees
+GROUP BY department
+ORDER BY COUNT(department) DESC
+LIMIT 1;
+
+SELECT department, SUM(salary) AS total_salary
+FROM employees
+GROUP BY department
+ORDER BY total_salary
+LIMIT 1;
+
+SELECT department, SUM(salary)
+FROM employees
+GROUP BY department;
+
+SELECT department, COUNT(department)
+FROM employees
+GROUP BY department
+HAVING COUNT(department) > 2;
+
+SELECT department, SUM(salary) AS total_salary
+FROM employees
+GROUP BY department
+ORDER BY total_salary DESC
+LIMIT 1;
+
+SELECT department, SUM(salary)
+FROM employees
+GROUP BY department
+ORDER BY SUM(salary) DESC
+LIMIT 1 OFFSET 1;
+
+SELECT emp_name, department
+FROM employees
+WHERE salary = (SELECT MAX(salary) FROM employees);
+
+SELECT emp_name, department, salary
+FROM employees
+WHERE salary > (SELECT AVG(salary) FROM employees);
+
+CREATE TABLE students (
+    stu_id INT,
+    stu_name VARCHAR(25)
+);
+
+INSERT INTO students VALUES
+(301, 'Deepak'),
+(302, 'Manisha'),
+(303, 'Kiran'),
+(304, 'Anjali'),
+(305, 'Suresh');
+
+CREATE TABLE locations (
+    stu_id INT,
+    city VARCHAR(25)
+);
+
+INSERT INTO locations VALUES
+(301, 'Mumbai'),
+(304, 'Delhi'),
+(305, 'Hyderabad');
+
+SELECT * FROM students;
+SELECT * FROM locations;
+SELECT * FROM students CROSS JOIN locations;
+SELECT * FROM students INNER JOIN locations ON students.stu_id = locations.stu_id;
+SELECT * FROM students LEFT OUTER JOIN locations ON students.stu_id = locations.stu_id;
+SELECT * FROM students RIGHT OUTER JOIN locations ON students.stu_id = locations.stu_id;
+SELECT * FROM students FULL JOIN locations ON students.stu_id = locations.stu_id;
+
+SELECT DISTINCT salary
+FROM employees E1
+WHERE (
+    SELECT COUNT(DISTINCT salary)
+    FROM employees E2
+    WHERE E2.salary > E1.salary
+) = 4;
