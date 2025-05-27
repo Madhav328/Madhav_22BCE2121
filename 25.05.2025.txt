@@ -1,0 +1,70 @@
+package connection;
+import java.sql.*;
+
+public class DBconnection {
+    public static void main(String[] args) {
+        try {
+            Connection con = DB_connection.get_connection();
+            if (con != null) {
+                System.out.println("Connection established: " + con);
+                Statement stmt = con.createStatement();
+                ResultSet rs = stmt.executeQuery("SELECT * FROM student");
+                while (rs.next())
+                    System.out.println(rs.getInt(1) + " " + rs.getString(2));
+                con.close();
+            }
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+}
+
+-----------------------------------------------------------------------------------------
+
+package crud_operation;
+import java.sql.Connection;
+import java.sql.DriverManager;
+
+public class DB_connection {
+    public static Connection get_connection() {
+        Connection connection = null;
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/vit", "root", "Madhav323@");
+        } catch (Exception e) {
+            System.out.println("Connection failed: " + e.getMessage());
+        }
+        return connection;
+    }
+}
+
+
+-----------------------------------------------------------------------------------------
+
+package crud_operation;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+
+public class CRUD_operation {
+    public static void main(String[] args) {
+        create_data(103, "vamsi");
+        create_data(104, "sindhu");
+    }
+
+    public static void create_data(int sl_no, String name) {
+        Connection connection = DB_connection.get_connection();
+        if (connection != null) {
+            try {
+                String query = "INSERT INTO student VALUES (?, ?)";
+                PreparedStatement ps = connection.prepareStatement(query);
+                ps.setInt(1, sl_no);
+                ps.setString(2, name);
+                ps.executeUpdate();
+                System.out.println("Inserted: " + sl_no + " " + name);
+            } catch (Exception e) {
+                System.out.println("Insert failed: " + e.getMessage());
+            }
+        }
+    }
+}
