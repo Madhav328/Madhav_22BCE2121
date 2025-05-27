@@ -1,0 +1,152 @@
+package crud_operation;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.Scanner;
+
+import com.mysql.cj.jdbc.result.ResultSetMetaData;
+
+public class CRUD_operation {
+
+    public static void main(String[] args) {
+        CRUD_operation objTest = new CRUD_operation();
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Enter the number of students to insert: ");
+        int n = sc.nextInt();
+        for (int i = 0; i < n; i++) {
+            System.out.print("Enter student sl no: ");
+            int sl_no = sc.nextInt();
+            sc.nextLine();
+            System.out.print("Enter the student's name: ");
+            String name = sc.nextLine();
+            objTest.create_data(sl_no, name);
+        }
+
+        objTest.read_data();
+        objTest.read_data_with_condition();
+        objTest.update_data(104, 113, "Nandini");
+        objTest.read_data();
+        objTest.alter_table();
+        objTest.describe_table();
+
+        System.out.print("Enter the record's student_id to delete: ");
+        int s_id = sc.nextInt();
+        objTest.delete_data(s_id);
+
+        sc.close();
+    }
+
+    public void create_data(int sl_no, String name) {
+        try (Connection connection = DB_connection.get_connection();
+             PreparedStatement ps = connection.prepareStatement("INSERT INTO student VALUES (?, ?)")) {
+            ps.setInt(1, sl_no);
+            ps.setString(2, name);
+            ps.executeUpdate();
+            System.out.println("Inserted: " + sl_no + " " + name);
+        } catch (Exception e) {
+            System.out.println("Insert error: " + e.getMessage());
+        }
+    }
+
+    public void read_data() {
+        try (Connection connection = DB_connection.get_connection();
+             PreparedStatement ps = connection.prepareStatement("SELECT * FROM student");
+             ResultSet rs = ps.executeQuery()) {
+            ResultSetMetaData metaData = (ResultSetMetaData) rs.getMetaData();
+            int columnCount = metaData.getColumnCount();
+            System.out.println("\nStudent Table Data:");
+            while (rs.next()) {
+                for (int i = 1; i <= columnCount; i++) {
+                    Object value = rs.getObject(i);
+                    System.out.print(value + "\t");
+                }
+                System.out.println();
+            }
+        } catch (Exception e) {
+            System.out.println("Read error: " + e.getMessage());
+        }
+    }
+
+    public void read_data_with_condition() {
+        try (Scanner sc = new Scanner(System.in);
+             Connection connection = DB_connection.get_connection();
+             PreparedStatement ps = connection.prepareStatement("SELECT * FROM student WHERE s_id = ?")) {
+            System.out.print("Enter SL_NO to search: ");
+            int sl_no = sc.nextInt();
+            ps.setInt(1, sl_no);
+            try (ResultSet rs = ps.executeQuery()) {
+                ResultSetMetaData metaData = (ResultSetMetaData) rs.getMetaData();
+                int columnCount = metaData.getColumnCount();
+                System.out.println("\nSearch Result:");
+                boolean found = false;
+                while (rs.next()) {
+                    found = true;
+                    for (int i = 1; i <= columnCount; i++) {
+                        Object value = rs.getObject(i);
+                        System.out.print(value + "\t");
+                    }
+                    System.out.println();
+                }
+                if (!found) {
+                    System.out.println("No record found with SL_NO: " + sl_no);
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Search error: " + e.getMessage());
+        }
+    }
+
+    public void update_data(int sl_no, int new_sl_no, String name) {
+        try (Connection connection = DB_connection.get_connection();
+             PreparedStatement ps = connection.prepareStatement("UPDATE student SET s_id = ?, s_name = ? WHERE s_id = ?")) {
+            ps.setInt(1, new_sl_no);
+            ps.setString(2, name);
+            ps.setInt(3, sl_no);
+            ps.executeUpdate();
+            System.out.println("Updated record with s_id " + sl_no);
+        } catch (Exception e) {
+            System.out.println("Update error: " + e.getMessage());
+        }
+    }
+
+    public void delete_data(int s_id) {
+        try (Connection connection = DB_connection.get_connection();
+             PreparedStatement ps = connection.prepareStatement("DELETE FROM student WHERE s_id = ?")) {
+            ps.setInt(1, s_id);
+            ps.executeUpdate();
+            System.out.println("Deleted record with s_id " + s_id);
+        } catch (Exception e) {
+            System.out.println("Delete error: " + e.getMessage());
+        }
+    }
+
+    public void alter_table() {
+        try (Connection connection = DB_connection.get_connection();
+             PreparedStatement ps = connection.prepareStatement("ALTER TABLE student ADD age INT")) {
+            ps.executeUpdate();
+            System.out.println("Column 'age' added to student table.");
+        } catch (Exception e) {
+            System.out.println("Alter table error: " + e.getMessage());
+        }
+    }
+
+    public void describe_table() {
+        try (Connection connection = DB_connection.get_connection();
+             PreparedStatement ps = connection.prepareStatement("DESCRIBE student");
+             ResultSet rs = ps.executeQuery()) {
+            System.out.println("\nTable Structure (DESCRIBE student):");
+            System.out.println("Field\tType\tNull\tKey\tDefault\tExtra");
+            while (rs.next()) {
+                for (int i = 1; i <= 6; i++) {
+                    Object value = rs.getObject(i);
+                    System.out.print(value + "\t");
+                }
+                System.out.println();
+            }
+        } catch (Exception e) {
+            System.out.println("Describe table error: " + e.getMessage());
+        }
+    }
+}
